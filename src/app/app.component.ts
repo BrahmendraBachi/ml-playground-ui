@@ -1,10 +1,17 @@
-import { Component } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    Component,
+} from '@angular/core';
 
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
-    styleUrls: ['./app.component.less']
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    styleUrls: ['./app.component.less'],
 })
 export class AppComponent {
     title = 'ml-playground-ui';
+
+    constructor(private cdr: ChangeDetectorRef) {}
 }
