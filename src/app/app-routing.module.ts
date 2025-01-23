@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HomePageComponent } from './components/home-page/home-page.component';
+import { MachineLearningFeaturesComponent } from './components/machine-learning-features/machine-learning-features.component';
 
 const routes: Routes = [
     {
@@ -13,6 +14,10 @@ const routes: Routes = [
         component: HomePageComponent,
         pathMatch: 'full',
     },
+    {
+        path: 'machine-learning',
+        component: MachineLearningFeaturesComponent
+    }
 ];
 
 @NgModule({

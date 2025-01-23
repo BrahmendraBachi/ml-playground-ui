@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { ImageCard } from 'src/app/models/image-card.model';
 
 @Component({
     selector: 'app-features-list',
@@ -6,5 +7,6 @@ import { Component } from '@angular/core';
     styleUrls: ['./features-list.component.less'],
 })
 export class FeaturesListComponent {
-    public sampleText = 'Hello';
+    
+    @Input() public featureLists: ImageCard[];
 }
