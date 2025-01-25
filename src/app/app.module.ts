@@ -11,6 +11,7 @@ import { FeaturesListComponent } from './commons/features-list/features-list.com
 import { MatCardModule } from '@angular/material/card';
 import { MachineLearningFeaturesComponent } from './components/machine-learning-features/machine-learning-features.component';
 import { ConstructionInProgressComponent } from './commons/construction-in-progress/construction-in-progress.component';
+import { FooterComponent } from "./components/footer/footer.component";
 
 @NgModule({
     declarations: [
@@ -23,11 +24,12 @@ import { ConstructionInProgressComponent } from './commons/construction-in-progr
         ConstructionInProgressComponent,
     ],
     imports: [
-        BrowserModule,
-        AppRoutingModule,
-        BrowserAnimationsModule,
-        MatCardModule,
-    ],
+    BrowserModule,
+    AppRoutingModule,
+    BrowserAnimationsModule,
+    MatCardModule,
+    FooterComponent
+],
     providers: [],
     bootstrap: [AppComponent],
 })
