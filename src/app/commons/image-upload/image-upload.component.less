@@ -1,0 +1,26 @@
+.image-upload {
+    padding: 2rem;
+    display: flex;
+    height: 100%;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+
+    &-form {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+}
+
+input[type='file'] {
+    margin: 1rem 0;
+}
+
+.image-preview img {
+    max-width: 300px;
+    max-height: 300px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}

@@ -11,7 +11,5 @@ import {
     styleUrls: ['./app.component.less'],
 })
 export class AppComponent {
-    title = 'ml-playground-ui';
-
     constructor(private cdr: ChangeDetectorRef) {}
 }
