@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Output, ViewChild } from '@angular/core';
 
 @Component({
     selector: 'app-image-upload',
@@ -11,19 +11,24 @@ export class ImageUploadComponent {
     public selectedFile: File | null = null;
     public previewUrl: string | ArrayBuffer | null = null;
 
+    @ViewChild("fileInput") fileInputRef: ElementRef;
+    
+    @Output() onFileChanged: EventEmitter<File> = new EventEmitter();
+
 
 
     public onFileSelected(event: Event): void {
         const fileInput = event.target as HTMLInputElement;
         if (fileInput.files && fileInput.files.length > 0) {
-            this.selectedFile = fileInput.files[0];
+            const selectedFile = fileInput.files[0];
+            this.onFileChanged.emit(selectedFile)
 
             // Generate a preview URL for the selected file
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                this.previewUrl = e.target?.result;
-            };
-            reader.readAsDataURL(this.selectedFile);
+            // const reader = new FileReader();
+            // reader.onload = (e) => {
+            //     this.previewUrl = e.target?.result;
+            // };
+            // reader.readAsDataURL(this.selectedFile);
         }
     }
 
@@ -54,8 +59,16 @@ export class ImageUploadComponent {
     onChange(event: any) {
         this.onFileChange(event.target.files);    // "target" is correct here
     }
+
+    onUpload() {
+        // this.onFileChange(event.target.files);    // "target" is correct here
+    }
     
     private onFileChange(files: File[]) {
         // ...
+    }
+
+    public onClickBrowse(): void {
+        this.fileInputRef.nativeElement.click();   
     }
 }

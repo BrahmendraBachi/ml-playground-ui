@@ -41,7 +41,7 @@ import {MatInputModule} from '@angular/material/input';
     MatCardModule,
     MatFormFieldModule,
     MatSelectModule,
-    MatInputModule
+    FooterComponent
 ],
     providers: [],
     bootstrap: [AppComponent],

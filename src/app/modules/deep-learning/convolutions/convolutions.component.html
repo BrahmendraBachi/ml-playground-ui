@@ -1,9 +1,23 @@
-<p>convolutions works!</p>
+<div class="convolutions">
+    <div class="convolutions-form">
+        <mat-form-field class="convolutions-form-field">
+            <mat-label>Select Filters Type</mat-label>
+            <mat-select>
+                <mat-option *ngFor="let filter of filterTypes;">{{filter?.viewValue}}</mat-option>
+            </mat-select>
+        </mat-form-field>
+        
 
-<div>
-    
+        <div class="convolutions-form-image">
+            <app-image-upload
+                *ngIf="!imageUrl"
+                (onFileChanged)="onFileChanged($event)"
+            >
+            </app-image-upload>
+            <img *ngIf="imageUrl" [src]="imageUrl" [alt]="'Image'" />
+        </div>
+    </div>
+    <div>
+        <span>Hello</span>
+    </div>
 </div>
-
-<app-image-upload>
-
-</app-image-upload>
