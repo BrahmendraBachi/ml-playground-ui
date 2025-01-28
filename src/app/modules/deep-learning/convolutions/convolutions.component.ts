@@ -14,6 +14,8 @@ export class ConvolutionsComponent {
 
     public imageUrl: string | ArrayBuffer | null = null;
 
+    public selectedFilterValue: string = "";
+
     public filterTypes: { viewValue: string, value: string }[] = [
         {
             viewValue: "3 * 3",
@@ -32,5 +34,15 @@ export class ConvolutionsComponent {
             this.cdr.detectChanges();
         };
         reader.readAsDataURL(event);
+    }
+
+    public onFilterChange(event: any): void {
+        this.selectedFilterValue = event.target?.value;
+        this.cdr.detectChanges();
+    }
+
+    public resetFile(): void {
+        this.imageUrl = ""
+        this.cdr.detectChanges();
     }
 }

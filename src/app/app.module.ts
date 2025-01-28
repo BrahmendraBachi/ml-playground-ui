@@ -9,7 +9,7 @@ import { HomePageComponent } from './components/home-page/home-page.component';
 import { FeatureCardComponent } from './commons/feature-card/feature-card.component';
 import { FeaturesListComponent } from './commons/features-list/features-list.component';
 import { MatCardModule } from '@angular/material/card';
-import {MatFormFieldModule} from '@angular/material/form-field';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MachineLearningFeaturesComponent } from './components/machine-learning-features/machine-learning-features.component';
 import { ConstructionInProgressComponent } from './commons/construction-in-progress/construction-in-progress.component';
 import { FooterComponent } from "./components/footer/footer.component";
@@ -17,8 +17,8 @@ import { DeepLearningFeaturesComponent } from './components/deep-learning-featur
 import { ConvolutionsComponent } from './modules/deep-learning/convolutions/convolutions.component';
 import { ImageUploadComponent } from './commons/image-upload/image-upload.component';
 import { BreadcrumbsComponent } from './commons/breadcrumbs/breadcrumbs.component';
-import {MatSelectModule} from '@angular/material/select';
-import {MatInputModule} from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
 
 @NgModule({
     declarations: [
@@ -35,15 +35,16 @@ import {MatInputModule} from '@angular/material/input';
         BreadcrumbsComponent,
     ],
     imports: [
-    BrowserModule,
-    AppRoutingModule,
-    BrowserAnimationsModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatSelectModule,
-    FooterComponent
-],
+        BrowserModule,
+        AppRoutingModule,
+        BrowserAnimationsModule,
+        MatCardModule,
+        MatFormFieldModule,
+        MatSelectModule,
+        FooterComponent,
+        MatButtonModule
+    ],
     providers: [],
     bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule { }

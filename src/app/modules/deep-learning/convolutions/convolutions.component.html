@@ -1,23 +1,40 @@
 <div class="convolutions">
     <div class="convolutions-form">
-        <mat-form-field class="convolutions-form-field">
-            <mat-label>Select Filters Type</mat-label>
-            <mat-select>
-                <mat-option *ngFor="let filter of filterTypes;">{{filter?.viewValue}}</mat-option>
-            </mat-select>
-        </mat-form-field>
-        
+        <div class="convolutions-form-fields">
+            <select 
+                class="form-select" 
+                aria-label=".form-select-lg example" 
+                [value]="selectedFilterValue"
+                (change)="onFilterChange($event)"
+            >
+                <option value="" selected>Select Filter Type</option>
+                <option *ngFor="let fitler of filterTypes" 
+                    [value]="fitler.value"
+                >
+                    {{fitler.viewValue}}
+                </option>
+            </select>
+            <button type="button" class="btn btn-danger" (click)="resetFile()"> Reset </button>
+        </div>
 
         <div class="convolutions-form-image">
-            <app-image-upload
-                *ngIf="!imageUrl"
-                (onFileChanged)="onFileChanged($event)"
-            >
-            </app-image-upload>
-            <img *ngIf="imageUrl" [src]="imageUrl" [alt]="'Image'" />
+            <ng-container *ngIf="!imageUrl; else imageTemplate">
+                <app-image-upload (onFileChanged)="onFileChanged($event)">
+                </app-image-upload>
+            </ng-container>
+            <ng-template #imageTemplate>
+                <img class="convolutions-form-image__reupload" [src]="imageUrl" [alt]="'Image'" />
+            </ng-template>
         </div>
     </div>
     <div>
         <span>Hello</span>
     </div>
 </div>
+
+<ng-template #imageUpload> 
+    <app-image-upload
+        (onFileChanged)="onFileChanged($event)"
+    >
+    </app-image-upload>
+</ng-template>

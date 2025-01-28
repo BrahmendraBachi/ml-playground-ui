@@ -7,11 +7,9 @@
         #fileInput
         class="image-upload__input"
         type="file"
+        [accept]="'image/*'"
         (change)="onFileSelected($event)"
     />
-
-    <!-- <div class="image-upload__icon"> -->
     <img [src]="'assets/svg-images/upload.svg'" [alt]="'Upload Image'"/>
-    <!-- </div> -->
     <span class="image-upload__text">Upload Image or </span>
 </div>
