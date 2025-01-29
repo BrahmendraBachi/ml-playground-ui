@@ -1,46 +1,62 @@
 .convolutions {
-    height: 100%;
-    display: flex;
-    justify-content: space-between;
-    flex-direction: row;
+    height: calc(100% - 2rem);
     padding: 1rem;
 
-    &-form {
+    &-animation {
         display: flex;
-        justify-content: center;
-        flex-direction: column;
-        align-items: flex-start;
-        width: 400px;
-        gap: 1rem;  
+        justify-content: flex-end;
 
-        &-fields {
-            display: flex;
-            flex-direction: row;
-            width: 100%;
-            justify-content: space-between;
+        button.btn-link {
 
-            select.form-select {
-                width: fit-content;
-            }
+            --bs-btn-padding-x: 0rem;
+            --bs-btn-padding-y: 0rem;
+            text-decoration: none;
         }
+    }
+    
+    &-display {
+        height: 100%;
+        display: flex;
+        justify-content: space-between;
+        flex-direction: row;
 
-        &-image {
-            max-height: calc(100% - 4rem);
-            width: 100%;
-            border: 2px dashed green;
-            border-radius: 10px;
-            height: 400px;
+        &-form {
             display: flex;
             justify-content: center;
-            align-items: center;
-            position: relative;
-
-            img {
-                height: 398px;
-                width: 398px;
-                border-radius: 10px;
+            flex-direction: column;
+            align-items: flex-start;
+            width: 400px;
+            gap: 1rem;  
+    
+            &-fields {
+                display: flex;
+                flex-direction: row;
+                width: 100%;
+                justify-content: space-between;
+    
+                select.form-select {
+                    width: fit-content;
+                }
             }
-
+    
+            &-image {
+                max-height: calc(100% - 3rem);
+                width: 100%;
+                border: 2px dashed green;
+                border-radius: 10px;
+                height: 400px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                position: relative;
+    
+                img {
+                    height: 398px;
+                    width: 398px;
+                    border-radius: 10px;
+                }
+    
+            }
         }
     }
 }

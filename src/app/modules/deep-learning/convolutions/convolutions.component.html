@@ -1,34 +1,35 @@
 <div class="convolutions">
-    <div class="convolutions-form">
-        <div class="convolutions-form-fields">
-            <select 
-                class="form-select" 
-                aria-label=".form-select-lg example" 
-                [value]="selectedFilterValue"
-                (change)="onFilterChange($event)"
-            >
-                <option value="" selected>Select Filter Type</option>
-                <option *ngFor="let fitler of filterTypes" 
-                    [value]="fitler.value"
-                >
-                    {{fitler.viewValue}}
-                </option>
-            </select>
-            <button type="button" class="btn btn-danger" (click)="resetFile()"> Reset </button>
-        </div>
-
-        <div class="convolutions-form-image">
-            <ng-container *ngIf="!imageUrl; else imageTemplate">
-                <app-image-upload (onFileChanged)="onFileChanged($event)">
-                </app-image-upload>
-            </ng-container>
-            <ng-template #imageTemplate>
-                <img class="convolutions-form-image__reupload" [src]="imageUrl" [alt]="'Image'" />
-            </ng-template>
-        </div>
+    <div class="convolutions-animation">
+        <button class="btn btn-link">View Animation</button>
     </div>
-    <div>
-        <span>Hello</span>
+    <div class="convolutions-display">
+        <div class="convolutions-display-form">
+            <div class="convolutions-display-form-fields">
+                <select 
+                    class="form-select" 
+                    aria-label=".form-select-lg example" 
+                    [value]="selectedFilterValue"
+                    (change)="onFilterChange($event)"
+                >
+                    <option value="" selected>Select Filter Type</option>
+                    <option *ngFor="let fitler of filterTypes" 
+                        [value]="fitler.value"
+                    >
+                        {{fitler.viewValue}}
+                    </option>
+                </select>
+                <button type="button" class="btn btn-danger" (click)="resetFile()"> Reset </button>
+            </div>
+    
+            <div class="convolutions-display-form-image">
+                <ng-container *ngIf="imageUrl; else imageUpload">
+                        <img class="convolutions-display-form-image__reupload" [src]="imageUrl" [alt]="'Image'" />
+                </ng-container>
+            </div>
+        </div>
+        <div>
+            <span>Hello</span>
+        </div>
     </div>
 </div>
 
@@ -38,3 +39,25 @@
     >
     </app-image-upload>
 </ng-template>
+
+<div class="modal fade" id="myModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Popup Title</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          This is a Bootstrap popup.
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">
+    Open Popup
+  </button>
+  
