@@ -19,6 +19,8 @@ import { ImageUploadComponent } from './commons/image-upload/image-upload.compon
 import { BreadcrumbsComponent } from './commons/breadcrumbs/breadcrumbs.component';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
+import {MatDialogModule} from '@angular/material/dialog';
+import { ConvolutionsGraphicsComponent } from './modules/deep-learning/convolutions-graphics/convolutions-graphics.component';
 
 @NgModule({
     declarations: [
@@ -33,6 +35,8 @@ import { MatButtonModule } from '@angular/material/button';
         ConvolutionsComponent,
         ImageUploadComponent,
         BreadcrumbsComponent,
+        FooterComponent,
+        ConvolutionsGraphicsComponent,
     ],
     imports: [
         BrowserModule,
@@ -41,8 +45,8 @@ import { MatButtonModule } from '@angular/material/button';
         MatCardModule,
         MatFormFieldModule,
         MatSelectModule,
-        FooterComponent,
-        MatButtonModule
+        MatButtonModule,
+        MatDialogModule
     ],
     providers: [],
     bootstrap: [AppComponent],

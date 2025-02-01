@@ -7,8 +7,9 @@
             "projectType": "application",
             "schematics": {
                 "@schematics/angular:component": {
-                    "style": "less"
-                }
+                    "style": "less",
+                    "standalone": false
+                },
             },
             "root": "",
             "sourceRoot": "src",
