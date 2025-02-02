@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { DEEP_LEARNING, MACHINE_LEARNING, ML_PLAYGROUND_UI } from 'src/app/helpers/constants';
-import { ImageCard } from 'src/app/models/image-card.model';
+import { ImageCard } from 'src/app/models/ml.model';
 import { HeaderTitleService } from 'src/app/services/header-title.service';
 
 @Component({

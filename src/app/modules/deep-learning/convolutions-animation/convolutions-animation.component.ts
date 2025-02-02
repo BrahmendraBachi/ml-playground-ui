@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input } from '@angular/core';
 import * as tf from "@tensorflow/tfjs"
+import { range } from 'rxjs';
+import { Filter } from 'src/app/models/ml.model';
 
 @Component({
     selector: 'app-convolutions-animation',
@@ -11,15 +13,16 @@ export class ConvolutionsAnimationComponent {
 
     @Input() imageUrl: string | ArrayBuffer = "assets/nine.jpg";
 
-
     @Input() selectedFilterValue: string = "";
 
     @Input() imageTensor: number[] = [];
 
-    public image: HTMLImageElement;
+    public image: HTMLImageElement
 
-    public numbers: number[] = Array.from({ length: 30*30 }, (_, i) => i + 1);
-
+    public filter: Filter = {
+        filterType: "3 * 3",
+        noOfCells: 9
+    }
 
     constructor(private cdr: ChangeDetectorRef) {
     }
@@ -34,26 +37,14 @@ export class ConvolutionsAnimationComponent {
         const imageTensor = tf.browser.fromPixels(this.image);
         const resizedImage = await this.resizeImage(this.image, 30, 30);
         
-        console.log("resizedImage.shape: ", resizedImage.shape);
-
-        console.log(await resizedImage.data());
-        
         let graySclaed = await this.convertIntoGrayScale(resizedImage);
-
-        console.log(await graySclaed.data());
-
-        // graySclaed.
-        
-        // console.log("graySclaed: ", await graySclaed.data());
 
         await this.renderResizedImage(graySclaed);
 
         (await graySclaed.data()).forEach((data) => {
-            // console.log(data);
             this.imageTensor.push(data);
         })
 
-        console.log(this.imageTensor);
         this.cdr.detectChanges();
     }
 
@@ -67,7 +58,6 @@ export class ConvolutionsAnimationComponent {
     }
 
     public returnDecimal(num: number): number {
-        console.log(num);
         return parseFloat(num.toFixed(1));
     }
 
@@ -198,7 +188,6 @@ export class ConvolutionsAnimationComponent {
         const grayscaleArray: number[][] = grayscale.arraySync() as number[][];
         const grayscaleRounded = grayscaleArray.map((row: number[]) => 
         row.map((value: number) => parseFloat(value.toFixed(1))));
-        console.log(grayscaleRounded);
         return tf.tensor(grayscaleRounded) as tf.Tensor2D;
     }
 

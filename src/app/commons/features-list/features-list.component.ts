@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { ImageCard } from 'src/app/models/image-card.model';
+import { ImageCard } from 'src/app/models/ml.model';
 
 @Component({
     selector: 'app-features-list',

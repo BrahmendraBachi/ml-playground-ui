@@ -6,7 +6,20 @@
             </div>
         </div>
     </div>
-    <div class="">
-        <!-- <img [src]="imageUrl" [alt]="'image'"/> -->
+    <div class="grid-container filter">
+        <div class="grid-item" *ngFor="let item of [].constructor(filter.noOfCells); let i = index">
+            <ul class="grid-item__filter">
+                <li>2</li>
+                <li>X</li>
+                <li>3</li>
+            </ul>
+        </div>
+    </div>
+    <div class="grid-container">
+        <div class="grid-item" *ngFor="let item of imageTensor">
+            <div class="grid-item__opacity" [ngClass]="{'black_gb': item <= 0.3}" [ngStyle]="{'opacity': item, 'color': 'black'}">
+                {{returnDecimal(item)}}
+            </div>
+        </div>
     </div>
 </div>

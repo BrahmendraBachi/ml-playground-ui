@@ -4,3 +4,8 @@ export interface ImageCard {
     footerContent?: string;
     routePart?: string
 }
+
+export interface Filter {
+    filterType: string,
+    noOfCells: number
+}

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
-import { ImageCard } from 'src/app/models/image-card.model';
+import { ImageCard } from 'src/app/models/ml.model';
 import { HeaderTitleService } from 'src/app/services/header-title.service';
 
 @Component({

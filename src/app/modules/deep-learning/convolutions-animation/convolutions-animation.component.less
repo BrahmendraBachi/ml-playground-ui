@@ -19,8 +19,26 @@
     grid-template-columns: repeat(30, 20px); /* 30 columns, each 20px wide */
     grid-template-rows: repeat(30, 20px); /* 30 rows, each 20px high */
     gap: 2px; /* Optional gap between cells */
-    padding: 10px;
+    padding: 5px;
     background-color: #000;
+
+    &.filter {
+        // display: grid;
+        background-color: lightgreen;
+        grid-template-columns: repeat(3, 100px);
+        grid-template-rows: repeat(3, 80px);
+        margin: auto;
+
+
+        .grid-item {
+            display: flex;
+            height: 100%;
+            width: 100%;
+            justify-content: center;
+            align-items: center;
+            border-radius: 0;
+        }
+    }
 }
 
 .grid-item {
@@ -54,6 +72,10 @@
             opacity: 1 !important;
         }
 
+    }
+
+    &__filter {
+        display: flex;
     }
 }
 
