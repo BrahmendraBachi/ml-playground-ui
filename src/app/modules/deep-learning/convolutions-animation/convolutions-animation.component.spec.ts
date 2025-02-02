@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ConvolutionsGraphicsComponent } from './convolutions-graphics.component';
+import { ConvolutionsAnimationComponent } from './convolutions-animation.component';
 
 describe('ConvolutionsGraphicsComponent', () => {
-  let component: ConvolutionsGraphicsComponent;
-  let fixture: ComponentFixture<ConvolutionsGraphicsComponent>;
+  let component: ConvolutionsAnimationComponent;
+  let fixture: ComponentFixture<ConvolutionsAnimationComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ConvolutionsGraphicsComponent]
+      declarations: [ConvolutionsAnimationComponent]
     })
     .compileComponents();
     
-    fixture = TestBed.createComponent(ConvolutionsGraphicsComponent);
+    fixture = TestBed.createComponent(ConvolutionsAnimationComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

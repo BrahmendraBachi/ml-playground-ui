@@ -2,12 +2,12 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input } from '@a
 import * as tf from "@tensorflow/tfjs"
 
 @Component({
-    selector: 'app-convolutions-graphics',
-    templateUrl: './convolutions-graphics.component.html',
-    styleUrls: ['./convolutions-graphics.component.less'],
+    selector: 'app-convolutions-animation',
+    templateUrl: './convolutions-animation.component.html',
+    styleUrls: ['./convolutions-animation.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ConvolutionsGraphicsComponent {
+export class ConvolutionsAnimationComponent {
 
     @Input() imageUrl: string | ArrayBuffer = "assets/nine.jpg";
 

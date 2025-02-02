@@ -5,7 +5,7 @@ import { MachineLearningFeaturesComponent } from './components/machine-learning-
 import { ConstructionInProgressComponent } from './commons/construction-in-progress/construction-in-progress.component';
 import { DeepLearningFeaturesComponent } from './components/deep-learning-features/deep-learning-features.component';
 import { ConvolutionsComponent } from './modules/deep-learning/convolutions/convolutions.component';
-import { ConvolutionsGraphicsComponent } from './modules/deep-learning/convolutions-graphics/convolutions-graphics.component';
+import { ConvolutionsAnimationComponent } from './modules/deep-learning/convolutions-animation/convolutions-animation.component';
 
 const routes: Routes = [
     {
@@ -38,7 +38,7 @@ const routes: Routes = [
     },
     {
         path: "animation",
-        component: ConvolutionsGraphicsComponent
+        component: ConvolutionsAnimationComponent
     }
 ];
 
