@@ -1,12 +1,14 @@
-<h2 mat-dialog-title>Hi Brahmendra Bachi</h2>
-<mat-dialog-content>
-    <p>What's your favorite animal?</p>
-    <mat-form-field>
-        <mat-label>Favorite Animal</mat-label>
-        <input matInput />
-    </mat-form-field>
-</mat-dialog-content>
-<mat-dialog-actions>
-    <button mat-button (click)="">No Thanks</button>
-    <button mat-button [mat-dialog-close]="" cdkFocusInitial>Ok</button>
-</mat-dialog-actions>
+<div class="animation">
+    <div class="grid-container">
+        <div class="grid-item" *ngFor="let item of imageTensor">
+            <div class="grid-item__opacity" [ngClass]="{'black_gb': item <= 0.3}" [ngStyle]="{'opacity': item, 'color': 'black'}">
+                <!-- <span></span> -->
+                <!-- <span>{{returnDecimal(item)}}</span> -->
+                {{returnDecimal(item)}}
+            </div>
+        </div>
+    </div>
+    <div class="">
+        <!-- <img [src]="imageUrl" [alt]="'image'"/> -->
+    </div>
+</div>

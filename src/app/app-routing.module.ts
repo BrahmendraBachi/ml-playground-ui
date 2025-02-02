@@ -5,6 +5,7 @@ import { MachineLearningFeaturesComponent } from './components/machine-learning-
 import { ConstructionInProgressComponent } from './commons/construction-in-progress/construction-in-progress.component';
 import { DeepLearningFeaturesComponent } from './components/deep-learning-features/deep-learning-features.component';
 import { ConvolutionsComponent } from './modules/deep-learning/convolutions/convolutions.component';
+import { ConvolutionsGraphicsComponent } from './modules/deep-learning/convolutions-graphics/convolutions-graphics.component';
 
 const routes: Routes = [
     {
@@ -34,6 +35,10 @@ const routes: Routes = [
     {
         path: "convolutions",
         component: ConvolutionsComponent
+    },
+    {
+        path: "animation",
+        component: ConvolutionsGraphicsComponent
     }
 ];
 
