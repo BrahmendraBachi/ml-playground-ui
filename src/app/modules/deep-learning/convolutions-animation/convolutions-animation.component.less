@@ -1,10 +1,9 @@
 .animation {
-
     display: flex;
     padding: 1rem;
     height: 100%;
     justify-content: space-between;
-    
+
     &__image {
         height: 400px;
         width: 400px;
@@ -23,137 +22,137 @@
         justify-content: center;
         // align-items: flex;
     }
-}
 
-.grid-container {
-    display: grid;
-    grid-template-columns: repeat(30, 20px); /* 30 columns, each 20px wide */
-    grid-template-rows: repeat(30, 20px); /* 30 rows, each 20px high */
-    gap: 2px; /* Optional gap between cells */
-    padding: 5px;
-    background-color: #000;
-
-    &.filter {
-        // display: grid;
-        background-color: #0515058f;
-        grid-template-columns: repeat(3, 100px);
-        grid-template-rows: repeat(3, 100px);
-        margin: auto;
-
-
-        .grid-item {
-            display: flex;
-            height: 100%;
-            width: 100%;
-            justify-content: center;
-            align-items: center;
-            border-radius: 4px;
-        }
-    }
-
-    &.animator {
-        position: fixed;
-        grid-template-columns: repeat(3, 20px);
-        grid-template-rows: repeat(3, 20px);
-        background-color: transparent;
-        top: 84px;
-        left: 21px;
-        padding: 0;
-
-        .grid-item {
-            border: 3px solid red;
-            border-radius: 0px;
-            height: 100%;
-            width: 100%;
-
-            span {
+    .grid-container {
+        display: grid;
+        grid-template-columns: repeat(30, 20px); /* 30 columns, each 20px wide */
+        grid-template-rows: repeat(30, 20px); /* 30 rows, each 20px high */
+        gap: 2px; /* Optional gap between cells */
+        padding: 5px;
+        background-color: #000;
+    
+        &.filter {
+            // display: grid;
+            background-color: #0515058f;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+            margin: auto;
+    
+    
+            .grid-item {
                 display: flex;
                 height: 100%;
                 width: 100%;
-                justify-content: flex-end;
+                justify-content: center;
                 align-items: center;
-                color: black;
-                padding: 1rem;
+                border-radius: 4px;
             }
         }
-
-        &__animate {
-            transition-property: all;
-            transition-duration: 2s;
-            transition-timing-function: ease;
-            grid-template-columns: repeat(3, 100px);
-            grid-template-rows: repeat(3, 100px);
-            opacity: 0.4;
+    
+        &.animator {
+            position: fixed;
+            grid-template-columns: repeat(3, 20px);
+            grid-template-rows: repeat(3, 20px);
+            background-color: transparent;
+            top: 84px;
+            left: 21px;
+            padding: 0;
+    
+            .grid-item {
+                border: 3px solid red;
+                border-radius: 0px;
+                height: 100%;
+                width: 100%;
+    
+                span {
+                    display: flex;
+                    height: 100%;
+                    width: 100%;
+                    justify-content: flex-end;
+                    align-items: center;
+                    color: black;
+                    padding: 1rem;
+                }
+            }
+    
+            &__animate {
+                transition-property: all;
+                transition-duration: 2s;
+                transition-timing-function: ease;
+                grid-template-columns: repeat(3, 100px);
+                grid-template-rows: repeat(3, 100px);
+                opacity: 0.4;
+            }
         }
     }
-}
 
-.grid-item {
-    width: 20px;
-    height: 20px;
-    border: 1px solid black;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    font-weight: bold;
-    border-radius: 100%;
-    color: white;
-    border: 1px solid white;
-
-    // &.decorated {
-    //     border: 2px solid red;
-    //     border-radius: 0px;
-    // }
-
-    &__opacity {
+    .grid-item {
+        width: 20px;
+        height: 20px;
+        border: 1px solid black;
         display: flex;
+        align-items: center;
         justify-content: center;
-        align-items: center;
-        // display: block;
-        font-size: 0.6rem;
-        background-color: white;
-        height: 100%;
-        width: 100%;
+        font-size: 12px;
+        font-weight: bold;
         border-radius: 100%;
-        font-weight: 400;
-
-        &.black_gb {
-            background-color: black !important;
-            color: white !important;
-            opacity: 1 !important;
-        }
-
-    }
-
-    &__filter {
-        display: flex;
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        height: 100%;
-        width: 100%;
-        justify-content: space-evenly;
-        align-items: center;
-
-
-        li:nth-child(1), li:nth-child(3) {
+        color: white;
+        border: 1px solid white;
+    
+        // &.decorated {
+        //     border: 2px solid red;
+        //     border-radius: 0px;
+        // }
+    
+        &__opacity {
             display: flex;
-            height: 40px;
-            width: 40px;
             justify-content: center;
             align-items: center;
+            // display: block;
+            font-size: 0.6rem;
             background-color: white;
-            color: rgb(8, 6, 6);
-            border-radius: 4px;
+            height: 100%;
+            width: 100%;
+            border-radius: 100%;
+            font-weight: 400;
+    
+            &.black_gb {
+                background-color: black !important;
+                color: white !important;
+                opacity: 1 !important;
+            }
+    
+        }
+    
+        &__filter {
+            display: flex;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            height: 100%;
+            width: 100%;
+            justify-content: space-evenly;
+            align-items: center;
+    
+    
+            li:nth-child(1), li:nth-child(3) {
+                display: flex;
+                height: 40px;
+                width: 40px;
+                justify-content: center;
+                align-items: center;
+                background-color: white;
+                color: rgb(8, 6, 6);
+                border-radius: 4px;
+            }
         }
     }
-}
-
-.color_black {
-    color: black;
-}
-
-.color_white {
-    color: white;
+    
+    .color_black {
+        color: black;
+    }
+    
+    .color_white {
+        color: white;
+    }
 }
