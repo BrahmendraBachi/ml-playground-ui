@@ -10,6 +10,9 @@
                     "style": "less",
                     "standalone": false
                 },
+                "@schematics/angular:directive": {
+                    "standalone": false
+                }
             },
             "root": "",
             "sourceRoot": "src",

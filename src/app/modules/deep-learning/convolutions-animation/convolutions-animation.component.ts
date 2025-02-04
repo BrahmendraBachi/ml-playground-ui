@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import * as tf from "@tensorflow/tfjs"
-import { range } from 'rxjs';
+import { BehaviorSubject, filter, Observable, race, range, Subject, takeUntil } from 'rxjs';
+import { RxUnsubscribe } from 'src/app/helpers/directives/rx-unsubscribe.directive';
 import { Filter } from 'src/app/models/ml.model';
 
 @Component({
@@ -9,13 +10,43 @@ import { Filter } from 'src/app/models/ml.model';
     styleUrls: ['./convolutions-animation.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ConvolutionsAnimationComponent {
+export class ConvolutionsAnimationComponent extends RxUnsubscribe implements OnInit {
 
     @Input() imageUrl: string | ArrayBuffer = "assets/nine.jpg";
 
     @Input() selectedFilterValue: string = "";
 
     @Input() imageTensor: number[] = [];
+
+    public filterTypes: { viewValue: string, value: string }[] = [
+        {
+            viewValue: "3 * 3",
+            value: "3 * 3"
+        },
+        {
+            viewValue: "5 * 5",
+            value: "5 * 5"
+        }
+    ]
+
+    @ViewChild("animation", {static: false})
+    set animationElement(element: ElementRef | undefined) {
+        if (!this.animationElement) {
+            this.animationElement = element;
+        }
+    } 
+
+
+    private beforeApplyFilter = new BehaviorSubject<number>(0);
+    public beforeApplyFilterObservable$ = this.beforeApplyFilter.asObservable();
+
+    private afterFilterApply = new BehaviorSubject<number>(null);
+    public afterApplyFilterObservable$ = this.afterFilterApply.asObservable();
+
+    private completeAnimation: Subject<void> = new Subject();
+    private completeAnimation$ = this.completeAnimation.asObservable();
+
+    public isStartedAnimation: boolean = false;
 
     public image: HTMLImageElement
 
@@ -24,11 +55,53 @@ export class ConvolutionsAnimationComponent {
         noOfCells: 9
     }
 
+    public image_dimentions: {x_dims: number, y_dims: number} = {
+        x_dims: 30,
+        y_dims: 30
+    }
+
     constructor(private cdr: ChangeDetectorRef) {
+        super();
     }
 
     public ngOnInit(): void {
         this._loadImage();
+        this.animation();
+        this.startAnimation();
+    }
+
+
+    public startAnimation(): void {
+        
+    }
+
+    public animation(): void {
+        this.beforeApplyFilterObservable$.pipe(
+            filter(value => !!value),
+            takeUntil(race(this.completeAnimation$, this.destroy$))
+        ).subscribe((iterator_id: number) => {
+            const initial_boundaries = this.getElementsCoordinatesById(String(iterator_id));
+            const target_boundaries = this.getElementsCoordinatesById("filter");
+            this.moveAnimatorToFilter(initial_boundaries, target_boundaries, iterator_id)
+        })
+
+        this.afterApplyFilterObservable$.pipe(
+            filter(value => !!value),
+            takeUntil(race(this.completeAnimation$, this.destroy$))
+        ).subscribe((iterator_id: number) => {
+            // pass
+            if ((iterator_id + 2) % 30 === 0) {
+                iterator_id = iterator_id + 2;
+            } else if ((iterator_id + 3) % 30 === 0) {
+                iterator_id = iterator_id + 3;
+            } else {
+                iterator_id++;
+            }
+            if (iterator_id >= 840) {
+                this.completeAnimation.next();
+            };
+            this.beforeApplyFilter.next(iterator_id);
+        } )
     }
 
     public async _loadImage(): Promise<void> {
@@ -46,7 +119,59 @@ export class ConvolutionsAnimationComponent {
         })
 
         this.cdr.detectChanges();
+
+        // this.iterateAnimator();
     }
+
+    // public iterateAnimator(): void {
+    //     let iterator = 0;
+    //     let interval = setInterval(() => {
+    //         const initial_boundaries = this.getElementsCoordinatesById(String(iterator));
+    //         const target_boundaries = this.getElementsCoordinatesById("filter");
+    //         console.log(target_boundaries);
+    //         this.animate(initial_boundaries, target_boundaries);
+    //         if ((iterator + 2) % 30 === 0) {
+    //             iterator = iterator + 2;
+    //         } else if ((iterator + 3) % 30 === 0) {
+    //             iterator = iterator + 3;
+    //         } else {
+    //             iterator++;
+    //         } 
+    //         if (iterator >= 840) {
+    //             clearInterval(interval);
+    //         };
+    //     }, 2000);
+    // }
+
+    public moveAnimatorToFilter(initial_boundaries: DOMRect, target_boundaries: DOMRect, iterator: number): void {
+        const animatorElement = this.animationElement.nativeElement;
+        animatorElement.style.top = `${initial_boundaries.top}px`;
+        animatorElement.style.left = `${initial_boundaries.left}px`;
+        this.cdr.detectChanges();
+
+        animatorElement.style.transitionProperty = 'all';
+        animatorElement.style.transitionDuration = '2s';
+        animatorElement.style.transitionTimingFunction = 'ease';
+        this.cdr.detectChanges();
+
+        setTimeout(() => {
+            animatorElement.style.height = `${target_boundaries.height}px`;
+            animatorElement.style.width = `${target_boundaries.width}px`;
+            animatorElement.style.top = `${target_boundaries.top}px`;
+            animatorElement.style.left = `${target_boundaries.left}px`;
+            animatorElement.style.gridTemplateColumns = "repeat(3, 100px)";
+            animatorElement.style.gridTemplateRows = "repeat(3, 100px)";
+            animatorElement.style.opacity = "0.4"
+            animatorElement.style.padding = "5px"
+            this.cdr.detectChanges();
+            this.afterFilterApply.next(iterator);
+        }, 500);
+    }
+    
+    public moveFilteredAnimatorToOutput(): void {
+        
+    }
+    
 
     async loadImageFromUrl(url: string): Promise<HTMLImageElement> {
         return new Promise((resolve, reject) => {
@@ -64,6 +189,16 @@ export class ConvolutionsAnimationComponent {
     public onFilterChange(event: any): void {
         this.selectedFilterValue = event.target?.value;
         this.cdr.detectChanges();
+    }
+
+    public isDecorated(index: number): boolean {
+        return index === 0;
+    }
+
+    public getElementsCoordinatesById(id: string): DOMRect {
+        const element = document.getElementById(id);
+        const boundaries = element.getBoundingClientRect();
+        return boundaries;
     }
 
     public resetFile(): void {

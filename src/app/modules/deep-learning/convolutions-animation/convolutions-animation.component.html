@@ -1,25 +1,61 @@
 <div class="animation">
     <div class="grid-container">
-        <div class="grid-item" *ngFor="let item of imageTensor">
-            <div class="grid-item__opacity" [ngClass]="{'black_gb': item <= 0.3}" [ngStyle]="{'opacity': item, 'color': 'black'}">
+        <div 
+            class="grid-item" 
+            *ngFor="let item of imageTensor; let ind=index"
+            [id]="'bf_' + ind"
+        >
+            <span 
+                class="grid-item__opacity" 
+                [ngClass]="{
+                    'black_gb': item <= 0.3
+                }"
+                [ngStyle]="{'opacity': item, 'color': 'black'}"
+            >
                 {{returnDecimal(item)}}
-            </div>
+            </span>
         </div>
     </div>
-    <div class="grid-container filter">
-        <div class="grid-item" *ngFor="let item of [].constructor(filter.noOfCells); let i = index">
-            <ul class="grid-item__filter">
-                <li>2</li>
-                <li>X</li>
-                <li>3</li>
-            </ul>
+    <div class="animation__filter">
+        <select 
+            class="form-select" 
+            aria-label=".form-select-lg example" 
+            [value]="selectedFilterValue"
+            (change)="onFilterChange($event)"
+        >
+            <option value="" selected>Select Filter Type</option>
+            <option *ngFor="let fitler of filterTypes" 
+                [value]="fitler.value"
+            >
+                {{fitler.viewValue}}
+            </option>
+        </select>
+        <div class="grid-container filter" [id]="'filter'">
+            <div class="grid-item" *ngFor="let item of [].constructor(filter.noOfCells); let i = index">
+                <ul class="grid-item__filter" *ngIf="isStartedAnimation">
+                    <li>2</li>
+                    <li>X</li>
+                    <li></li>
+                </ul>
+                <span> 2 </span>
+            </div>
         </div>
+        <button class="btn btn-primary">Start Animation</button>
     </div>
     <div class="grid-container">
-        <div class="grid-item" *ngFor="let item of imageTensor">
+        <div 
+            class="grid-item" 
+            *ngFor="let item of imageTensor; let ind=index"
+            [id]="'af_' + ind"
+        >
             <div class="grid-item__opacity" [ngClass]="{'black_gb': item <= 0.3}" [ngStyle]="{'opacity': item, 'color': 'black'}">
                 {{returnDecimal(item)}}
             </div>
+        </div>
+    </div>
+    <div class="grid-container animator" #animation *ngIf="isStartedAnimation">
+        <div class="grid-item" *ngFor="let item of [].constructor(filter.noOfCells)">
+            <span>2</span>
         </div>
     </div>
 </div>

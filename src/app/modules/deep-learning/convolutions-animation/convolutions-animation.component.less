@@ -2,15 +2,26 @@
 
     display: flex;
     padding: 1rem;
+    height: 100%;
     justify-content: space-between;
+    
     &__image {
         height: 400px;
         width: 400px;
 
         img {
             min-height: 100%;
-            min-width: 100%;   
+            min-width: 100%; 
         }
+    }
+
+    &__filter {
+        padding: 1rem 0;
+        display: flex;
+        height: 100%;
+        flex-direction: column;
+        justify-content: center;
+        // align-items: flex;
     }
 }
 
@@ -24,9 +35,9 @@
 
     &.filter {
         // display: grid;
-        background-color: lightgreen;
+        background-color: #0515058f;
         grid-template-columns: repeat(3, 100px);
-        grid-template-rows: repeat(3, 80px);
+        grid-template-rows: repeat(3, 100px);
         margin: auto;
 
 
@@ -36,7 +47,43 @@
             width: 100%;
             justify-content: center;
             align-items: center;
-            border-radius: 0;
+            border-radius: 4px;
+        }
+    }
+
+    &.animator {
+        position: fixed;
+        grid-template-columns: repeat(3, 20px);
+        grid-template-rows: repeat(3, 20px);
+        background-color: transparent;
+        top: 84px;
+        left: 21px;
+        padding: 0;
+
+        .grid-item {
+            border: 3px solid red;
+            border-radius: 0px;
+            height: 100%;
+            width: 100%;
+
+            span {
+                display: flex;
+                height: 100%;
+                width: 100%;
+                justify-content: flex-end;
+                align-items: center;
+                color: black;
+                padding: 1rem;
+            }
+        }
+
+        &__animate {
+            transition-property: all;
+            transition-duration: 2s;
+            transition-timing-function: ease;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+            opacity: 0.4;
         }
     }
 }
@@ -53,6 +100,11 @@
     border-radius: 100%;
     color: white;
     border: 1px solid white;
+
+    // &.decorated {
+    //     border: 2px solid red;
+    //     border-radius: 0px;
+    // }
 
     &__opacity {
         display: flex;
@@ -76,6 +128,25 @@
 
     &__filter {
         display: flex;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+        justify-content: space-evenly;
+        align-items: center;
+
+
+        li:nth-child(1), li:nth-child(3) {
+            display: flex;
+            height: 40px;
+            width: 40px;
+            justify-content: center;
+            align-items: center;
+            background-color: white;
+            color: rgb(8, 6, 6);
+            border-radius: 4px;
+        }
     }
 }
 
