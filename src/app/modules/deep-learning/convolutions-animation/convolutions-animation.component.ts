@@ -18,21 +18,26 @@ export class ConvolutionsAnimationComponent extends RxUnsubscribe implements OnI
 
     @Input() imageTensor: number[] = [];
 
-    public filterTypes: { viewValue: string, value: string }[] = [
+    public filterTypes: { viewValue: string, value: string, noOfCells: number }[] = [
         {
             viewValue: "3 * 3",
-            value: "3 * 3"
+            value: "3 * 3",
+            noOfCells: 9
         },
         {
             viewValue: "5 * 5",
-            value: "5 * 5"
+            value: "5 * 5",
+            noOfCells: 25
         }
     ]
+
+    private _animationElement: ElementRef | undefined;
+
 
     @ViewChild("animation", {static: false})
     set animationElement(element: ElementRef | undefined) {
         if (!this.animationElement) {
-            this.animationElement = element;
+            this._animationElement = element;
         }
     } 
 
@@ -68,6 +73,8 @@ export class ConvolutionsAnimationComponent extends RxUnsubscribe implements OnI
         this._loadImage();
         this.animation();
         this.startAnimation();
+        this.selectedFilterValue = this.filter.filterType;
+        this.cdr.detectChanges();
     }
 
 
@@ -144,7 +151,7 @@ export class ConvolutionsAnimationComponent extends RxUnsubscribe implements OnI
     // }
 
     public moveAnimatorToFilter(initial_boundaries: DOMRect, target_boundaries: DOMRect, iterator: number): void {
-        const animatorElement = this.animationElement.nativeElement;
+        const animatorElement = this._animationElement.nativeElement;
         animatorElement.style.top = `${initial_boundaries.top}px`;
         animatorElement.style.left = `${initial_boundaries.left}px`;
         this.cdr.detectChanges();
@@ -188,6 +195,13 @@ export class ConvolutionsAnimationComponent extends RxUnsubscribe implements OnI
 
     public onFilterChange(event: any): void {
         this.selectedFilterValue = event.target?.value;
+
+        this.filter = [this.filterTypes.find((_filter) => _filter.value === this.selectedFilterValue)].map((_filterValue) => {
+            return {
+                filterType: _filterValue.value,
+                noOfCells: _filterValue.noOfCells
+            } as Filter;
+        })[0];
         this.cdr.detectChanges();
     }
 

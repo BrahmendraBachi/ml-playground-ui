@@ -20,7 +20,8 @@ import { BreadcrumbsComponent } from './commons/breadcrumbs/breadcrumbs.componen
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import {MatDialogModule} from '@angular/material/dialog';
-import { ConvolutionsAnimationComponent } from './modules/deep-learning/convolutions-animation/convolutions-animation.component';
+import { ConvolutionsAnimationComponent } from './modules/deep-learning/convolutions-animation/convolutions-animation.component'
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
     declarations: [
@@ -46,7 +47,8 @@ import { ConvolutionsAnimationComponent } from './modules/deep-learning/convolut
         MatFormFieldModule,
         MatSelectModule,
         MatButtonModule,
-        MatDialogModule
+        MatDialogModule,
+        NgbModule
     ],
     providers: [],
     bootstrap: [AppComponent],

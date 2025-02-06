@@ -30,7 +30,7 @@
                 {{fitler.viewValue}}
             </option>
         </select>
-        <div class="grid-container filter" [id]="'filter'">
+        <div [class]="'grid-container filter grids-' + filter.noOfCells" [id]="'filter'">
             <div class="grid-item" *ngFor="let item of [].constructor(filter.noOfCells); let i = index">
                 <ul class="grid-item__filter" *ngIf="isStartedAnimation">
                     <li>2</li>
