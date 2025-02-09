@@ -141,7 +141,7 @@ export class ConvolutionsComponent {
         const convolved = tf.conv2d(batchedImage.toFloat(), filter, [1, 1], "same"); // Stride [1, 1], padding 'same'
     
         // Print the result tensor
-        // this.displayConvolvedImage(convolved);
+        this.displayConvolvedImage(convolved);
     }
 
     async convertIntoGrayImage(imageElement: any): Promise<any> {
@@ -149,14 +149,14 @@ export class ConvolutionsComponent {
         const grayscale = img.mean(2).div(255);  // Convert to grayscale (Removes color channel, making it 2D)
 
         // Create a canvas
-        // const canvas = document.createElement("canvas");
-        // document.body.appendChild(canvas);
-        // canvas.width = img.shape[1];
-        // canvas.height = img.shape[0];
+        const canvas = document.createElement("canvas");
+        document.body.appendChild(canvas);
+        canvas.width = img.shape[1];
+        canvas.height = img.shape[0];
 
 
         // // // Convert back to pixels and draw on canvas
-        // await tf.browser.toPixels(grayscale as any, canvas);
+        await tf.browser.toPixels(grayscale as any, canvas);
         return grayscale
     }
 

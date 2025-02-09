@@ -32,8 +32,8 @@
 
     .grid-container {
         display: grid;
-        grid-template-columns: repeat(30, 20px); /* 30 columns, each 20px wide */
-        grid-template-rows: repeat(30, 20px); /* 30 rows, each 20px high */
+        // grid-template-columns: repeat(45, 20px); /* 30 columns, each 20px wide */
+        // grid-template-rows: repeat(45, 20px); /* 30 rows, each 20px high */
         gap: 2px; /* Optional gap between cells */
         padding: 5px;
         background-color: #000;
@@ -67,11 +67,7 @@
     
         &.animator {
             position: fixed;
-            grid-template-columns: repeat(3, 20px);
-            grid-template-rows: repeat(3, 20px);
             background-color: transparent;
-            top: 84px;
-            left: 21px;
             padding: 0;
     
             .grid-item {
@@ -79,6 +75,8 @@
                 border-radius: 0px;
                 height: 100%;
                 width: 100%;
+                justify-content: center;
+                align-items: center;
     
                 span {
                     display: flex;
@@ -131,6 +129,7 @@
             width: 100%;
             border-radius: 100%;
             font-weight: 400;
+            opacity: 0;
     
             &.black_gb {
                 background-color: black !important;

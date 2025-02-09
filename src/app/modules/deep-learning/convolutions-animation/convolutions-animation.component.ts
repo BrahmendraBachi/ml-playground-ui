@@ -1,8 +1,10 @@
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, OnInit, Renderer2, ViewChild } from '@angular/core';
 import * as tf from "@tensorflow/tfjs"
-import { BehaviorSubject, filter, Observable, race, range, Subject, takeUntil } from 'rxjs';
+import { BehaviorSubject, delay, filter, Observable, of, race, range, Subject, switchMap, takeUntil, timer } from 'rxjs';
 import { RxUnsubscribe } from 'src/app/helpers/directives/rx-unsubscribe.directive';
 import { Filter } from 'src/app/models/ml.model';
+
+export const PIXELS = 45;
 
 @Component({
     selector: 'app-convolutions-animation',
@@ -13,11 +15,18 @@ import { Filter } from 'src/app/models/ml.model';
 export class ConvolutionsAnimationComponent extends RxUnsubscribe implements OnInit {
 
     @Input() imageUrl: string | ArrayBuffer = "assets/nine.jpg";
-
     @Input() selectedFilterValue: string = "";
 
-    @Input() imageTensor: number[] = [];
+    private imageTensor: tf.Tensor2D;
+    public imageFlattenedTensor: number[] = [];
+    public filterAppliedImageFlattenedTensor: any[] = Array.from({length: PIXELS * PIXELS}, (_, i) => '');
+    public animatorGrid: number[];
+    public defaultFilter: number[];
+    private allFilters: Record<string, number[]> = {
+        "vertical": [1, 1, 1, 0, 0, 0, -1, -1, -1],
+        "horizontal": [-1, 0, 1, -1, 0, 1, -1, 0, 1]
 
+    }
     public filterTypes: { viewValue: string, value: string, noOfCells: number }[] = [
         {
             viewValue: "3 * 3",
@@ -30,56 +39,52 @@ export class ConvolutionsAnimationComponent extends RxUnsubscribe implements OnI
             noOfCells: 25
         }
     ]
-
-    private _animationElement: ElementRef | undefined;
-
+    private _animationElement: any;
 
     @ViewChild("animation", {static: false})
     set animationElement(element: ElementRef | undefined) {
-        if (!this.animationElement) {
-            this._animationElement = element;
+        if (!!element && !this._animationElement) {
+            this._animationElement = element.nativeElement;
         }
     } 
 
-
     private beforeApplyFilter = new BehaviorSubject<number>(0);
     public beforeApplyFilterObservable$ = this.beforeApplyFilter.asObservable();
-
     private afterFilterApply = new BehaviorSubject<number>(null);
     public afterApplyFilterObservable$ = this.afterFilterApply.asObservable();
-
     private completeAnimation: Subject<void> = new Subject();
     private completeAnimation$ = this.completeAnimation.asObservable();
-
+    public animateTimer: number = 5;
     public isStartedAnimation: boolean = false;
-
     public image: HTMLImageElement
-
     public filter: Filter = {
         filterType: "3 * 3",
         noOfCells: 9
     }
-
-    public image_dimentions: {x_dims: number, y_dims: number} = {
-        x_dims: 30,
-        y_dims: 30
+    PIXELS = 30;
+    public image_dimensions: {x_pixels: number, y_pixels: number} = {
+        x_pixels: PIXELS,
+        y_pixels: PIXELS
     }
 
-    constructor(private cdr: ChangeDetectorRef) {
+    constructor(private cdr: ChangeDetectorRef, private renderer: Renderer2) {
         super();
     }
 
     public ngOnInit(): void {
         this._loadImage();
+        this.defaultFilter = this.allFilters["horizontal"];
         this.animation();
-        this.startAnimation();
         this.selectedFilterValue = this.filter.filterType;
+        this.addGridStyleToHTML();
         this.cdr.detectChanges();
     }
 
 
     public startAnimation(): void {
-        
+        this.isStartedAnimation = true;
+        this.cdr.detectChanges();
+        this.beforeApplyFilter.next(1);
     }
 
     public animation(): void {
@@ -87,98 +92,111 @@ export class ConvolutionsAnimationComponent extends RxUnsubscribe implements OnI
             filter(value => !!value),
             takeUntil(race(this.completeAnimation$, this.destroy$))
         ).subscribe((iterator_id: number) => {
-            const initial_boundaries = this.getElementsCoordinatesById(String(iterator_id));
-            const target_boundaries = this.getElementsCoordinatesById("filter");
-            this.moveAnimatorToFilter(initial_boundaries, target_boundaries, iterator_id)
-        })
+            const initial_boundaries = this.getElementsCoordinatesById(String("bf_" + iterator_id));
+            const filter_boundaries = this.getElementsCoordinatesById("filter");
+            this.cdr.detectChanges();
+            this.moveAnimatorToFilter(initial_boundaries, filter_boundaries, iterator_id);
+        });
 
         this.afterApplyFilterObservable$.pipe(
+            delay(this.animateTimer),
             filter(value => !!value),
             takeUntil(race(this.completeAnimation$, this.destroy$))
         ).subscribe((iterator_id: number) => {
-            // pass
-            if ((iterator_id + 2) % 30 === 0) {
-                iterator_id = iterator_id + 2;
-            } else if ((iterator_id + 3) % 30 === 0) {
-                iterator_id = iterator_id + 3;
-            } else {
-                iterator_id++;
-            }
-            if (iterator_id >= 840) {
-                this.completeAnimation.next();
-            };
-            this.beforeApplyFilter.next(iterator_id);
-        } )
+            const target_boundaries = this.getElementsCoordinatesById(String("af_" + iterator_id));
+            this.moveFilteredAnimator(target_boundaries, iterator_id);
+        })
     }
 
+    private roundTransitionTime(): number {
+        return parseFloat((this.animateTimer / 1000).toFixed(1));
+    }
+
+    public moveAnimatorToFilter(initial_boundaries: DOMRect, filter_boundaries: DOMRect, iterator: number): void {
+        this._animationElement.style.transitionDuration = '0s';
+        this._animationElement.style.top = `${initial_boundaries.top}px`;
+        this._animationElement.style.left = `${initial_boundaries.left}px`;
+        this._animationElement.style.height = '60px';
+        this._animationElement.style.width = '60px';
+        this._animationElement.style.padding = "0"
+        this._animationElement.style.gridTemplateColumns = "repeat(3, 20px)";
+        this._animationElement.style.gridTemplateRows = "repeat(3, 20px)";
+        this._animationElement.style.opacity = "1"
+        this.cdr.detectChanges();
+
+        // console.log(`assigned initial boundaries for ${iterator}`);
+
+        timer(1).pipe(
+            switchMap(() => {
+                this._animationElement.style.transitionProperty = 'all';
+                this._animationElement.style.transitionDuration = `${this.roundTransitionTime()}s`;
+                this._animationElement.style.transitionTimingFunction = 'ease';
+                this.completeAnimatorGridWithValues(iterator);
+                this.cdr.detectChanges();
+                return of({})
+            })).pipe(takeUntil(race(this.destroy$, this.completeAnimation$))).subscribe((data) => {
+                this._animationElement.style.height = `${filter_boundaries.height}px`;
+                this._animationElement.style.width = `${filter_boundaries.width}px`;
+                this._animationElement.style.top = `${filter_boundaries.top}px`;
+                this._animationElement.style.left = `${filter_boundaries.left}px`;
+                this._animationElement.style.gridTemplateColumns = "repeat(3, 100px)";
+                this._animationElement.style.gridTemplateRows = "repeat(3, 100px)";
+                this._animationElement.style.opacity = "0.4"
+                this._animationElement.style.padding = "5px"
+                this.cdr.detectChanges();
+                this.afterFilterApply.next(iterator);
+            })
+    }
+
+    private moveFilteredAnimator(target_boundaries: DOMRect, iterator_id: number): void {
+        this.animatorGrid = Array.from({length: 9}, (_, i) => i).map((ind) => this.animatorGrid[ind] * this.defaultFilter[ind]);
+        this._animationElement.style.opacity = "1"
+        this.cdr.detectChanges();
+
+        timer(1).pipe(
+            takeUntil(race(this.completeAnimation$, this.destroy$))
+        ).subscribe(() => {
+            this._animationElement.style.transition = `${this.roundTransitionTime()}`;
+            this._animationElement.style.top = `${target_boundaries.top}px`;
+            this._animationElement.style.left = `${target_boundaries.left}px`;
+            this._animationElement.style.height = '20px';
+            this._animationElement.style.width = '20px';
+            this._animationElement.style.padding = "0";
+            this._animationElement.style.gridTemplateColumns = `repeat(3, ${Math.floor(20 / 3)}px)`;
+            this._animationElement.style.gridTemplateRows = `repeat(3, ${Math.floor(20 / 3)}px)`;
+            this._animationElement.style.opacity = "0.1";
+            this.cdr.detectChanges();
+            timer(this.animateTimer).subscribe(() => {
+                iterator_id += (iterator_id + 2) % 45 === 0 ? 3 : 1
+                if (iterator_id >= 840) {
+                    this.completeAnimation.next();
+                };
+                const avgOfAnimatorGrid = this.animatorGrid.reduce((sum, num) => sum + num, 0) / 9;
+                this.filterAppliedImageFlattenedTensor[iterator_id] = this.returnDecimal(avgOfAnimatorGrid < 0 ? 0 : avgOfAnimatorGrid);
+                this.cdr.detectChanges();
+                // console.log(`In afterApplyFilterObservable$, iterator became ${iterator_id}} and called beforeFilter$`);
+                this.beforeApplyFilter.next(iterator_id);
+            })
+        })
+    }
+
+    private completeAnimatorGridWithValues(iterator: number): void {
+        const x = Math.floor(iterator / PIXELS);
+        const y = (iterator - 1) % PIXELS;
+        this.animatorGrid = this.imageTensor.slice([x, y], [3, 3]).flatten().arraySync();
+        this.animatorGrid = this.animatorGrid.map((val) => this.returnDecimal(val));
+        this.cdr.detectChanges();
+    }
+    
     public async _loadImage(): Promise<void> {
         this.image = await this.loadImageFromUrl(this.imageUrl as string);
         // this.displayImage()
-        const imageTensor = tf.browser.fromPixels(this.image);
-        const resizedImage = await this.resizeImage(this.image, 30, 30);
-        
-        let graySclaed = await this.convertIntoGrayScale(resizedImage);
-
-        await this.renderResizedImage(graySclaed);
-
-        (await graySclaed.data()).forEach((data) => {
-            this.imageTensor.push(data);
-        })
-
+        const resizedImage = await this.resizeImage(this.image);
+        this.imageTensor =await this.convertIntoGrayScale(resizedImage);
+        // await this.renderResizedImage(graySclaed)
+        this.imageFlattenedTensor = this.imageTensor.flatten().arraySync();
         this.cdr.detectChanges();
-
-        // this.iterateAnimator();
     }
-
-    // public iterateAnimator(): void {
-    //     let iterator = 0;
-    //     let interval = setInterval(() => {
-    //         const initial_boundaries = this.getElementsCoordinatesById(String(iterator));
-    //         const target_boundaries = this.getElementsCoordinatesById("filter");
-    //         console.log(target_boundaries);
-    //         this.animate(initial_boundaries, target_boundaries);
-    //         if ((iterator + 2) % 30 === 0) {
-    //             iterator = iterator + 2;
-    //         } else if ((iterator + 3) % 30 === 0) {
-    //             iterator = iterator + 3;
-    //         } else {
-    //             iterator++;
-    //         } 
-    //         if (iterator >= 840) {
-    //             clearInterval(interval);
-    //         };
-    //     }, 2000);
-    // }
-
-    public moveAnimatorToFilter(initial_boundaries: DOMRect, target_boundaries: DOMRect, iterator: number): void {
-        const animatorElement = this._animationElement.nativeElement;
-        animatorElement.style.top = `${initial_boundaries.top}px`;
-        animatorElement.style.left = `${initial_boundaries.left}px`;
-        this.cdr.detectChanges();
-
-        animatorElement.style.transitionProperty = 'all';
-        animatorElement.style.transitionDuration = '2s';
-        animatorElement.style.transitionTimingFunction = 'ease';
-        this.cdr.detectChanges();
-
-        setTimeout(() => {
-            animatorElement.style.height = `${target_boundaries.height}px`;
-            animatorElement.style.width = `${target_boundaries.width}px`;
-            animatorElement.style.top = `${target_boundaries.top}px`;
-            animatorElement.style.left = `${target_boundaries.left}px`;
-            animatorElement.style.gridTemplateColumns = "repeat(3, 100px)";
-            animatorElement.style.gridTemplateRows = "repeat(3, 100px)";
-            animatorElement.style.opacity = "0.4"
-            animatorElement.style.padding = "5px"
-            this.cdr.detectChanges();
-            this.afterFilterApply.next(iterator);
-        }, 500);
-    }
-    
-    public moveFilteredAnimatorToOutput(): void {
-        
-    }
-    
 
     async loadImageFromUrl(url: string): Promise<HTMLImageElement> {
         return new Promise((resolve, reject) => {
@@ -213,11 +231,6 @@ export class ConvolutionsAnimationComponent extends RxUnsubscribe implements OnI
         const element = document.getElementById(id);
         const boundaries = element.getBoundingClientRect();
         return boundaries;
-    }
-
-    public resetFile(): void {
-        this.imageUrl = ""
-        this.cdr.detectChanges();
     }
 
     private getImageData(): void {
@@ -264,13 +277,10 @@ export class ConvolutionsAnimationComponent extends RxUnsubscribe implements OnI
         });
     }
 
-    async resizeImage(imageElement: HTMLImageElement | HTMLCanvasElement, x_dim=300, y_dim=300): Promise<tf.Tensor3D> {
+    async resizeImage(imageElement: HTMLImageElement | HTMLCanvasElement, x_dim=this.image_dimensions.x_pixels, y_dim=this.image_dimensions.y_pixels): Promise<tf.Tensor3D> {
         // Load image as a tensor
         const img = tf.browser.fromPixels(imageElement);
-    
-        // Resize to 300x300 pixels
         let resizedImg = tf.image.resizeBilinear(img, [x_dim, y_dim]);
-
         resizedImg = resizedImg.div(255);
     
         return resizedImg;
@@ -336,7 +346,7 @@ export class ConvolutionsAnimationComponent extends RxUnsubscribe implements OnI
         const grayscale = imageTensor.mean(2);  // Mean along the 3rd dimension (RGB channels)
         const grayscaleArray: number[][] = grayscale.arraySync() as number[][];
         const grayscaleRounded = grayscaleArray.map((row: number[]) => 
-        row.map((value: number) => parseFloat(value.toFixed(1))));
+                row.map((value: number) => parseFloat(value.toFixed(1))));
         return tf.tensor(grayscaleRounded) as tf.Tensor2D;
     }
 
@@ -375,5 +385,17 @@ export class ConvolutionsAnimationComponent extends RxUnsubscribe implements OnI
             // Now you can use the canvas to display the image
             document.body.appendChild(canvas);
         }
+    }
+
+    private addGridStyleToHTML(): void {
+        const style = this.renderer.createElement('style');
+        style.innerHTML = `
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(${PIXELS}, 20px);
+            grid-template-rows: repeat(${PIXELS}, 20px);
+        }
+        `;
+        this.renderer.appendChild(document.head, style);
     }
 }
