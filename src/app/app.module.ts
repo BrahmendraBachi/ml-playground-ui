@@ -22,6 +22,7 @@ import { MatButtonModule } from '@angular/material/button';
 import {MatDialogModule} from '@angular/material/dialog';
 import { ConvolutionsAnimationComponent } from './modules/deep-learning/convolutions-animation/convolutions-animation.component'
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
     declarations: [
@@ -48,7 +49,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
         MatSelectModule,
         MatButtonModule,
         MatDialogModule,
-        NgbModule
+        NgbModule,
+        FormsModule
     ],
     providers: [],
     bootstrap: [AppComponent],

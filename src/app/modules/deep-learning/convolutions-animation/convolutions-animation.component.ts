@@ -4,7 +4,7 @@ import { BehaviorSubject, delay, filter, Observable, of, race, range, Subject, s
 import { RxUnsubscribe } from 'src/app/helpers/directives/rx-unsubscribe.directive';
 import { Filter } from 'src/app/models/ml.model';
 
-export const PIXELS = 45;
+export const PIXELS = 30;
 
 @Component({
     selector: 'app-convolutions-animation',
@@ -27,16 +27,22 @@ export class ConvolutionsAnimationComponent extends RxUnsubscribe implements OnI
         "horizontal": [-1, 0, 1, -1, 0, 1, -1, 0, 1]
 
     }
+
+    private images: {imageName: string, imageUrl: string}[] = [
+        {
+            imageName: "three",
+            imageUrl: "assets/three.webp"
+        },
+        {
+            imageName: "nine",
+            imageUrl: "assets/nine.jpg"
+        }
+    ]
     public filterTypes: { viewValue: string, value: string, noOfCells: number }[] = [
         {
             viewValue: "3 * 3",
             value: "3 * 3",
             noOfCells: 9
-        },
-        {
-            viewValue: "5 * 5",
-            value: "5 * 5",
-            noOfCells: 25
         }
     ]
     private _animationElement: any;
@@ -54,14 +60,15 @@ export class ConvolutionsAnimationComponent extends RxUnsubscribe implements OnI
     public afterApplyFilterObservable$ = this.afterFilterApply.asObservable();
     private completeAnimation: Subject<void> = new Subject();
     private completeAnimation$ = this.completeAnimation.asObservable();
-    public animateTimer: number = 5;
+    public animateTimer: number = 2000;
+    public amplifyRate: number = 2;
+
     public isStartedAnimation: boolean = false;
     public image: HTMLImageElement
     public filter: Filter = {
         filterType: "3 * 3",
         noOfCells: 9
     }
-    PIXELS = 30;
     public image_dimensions: {x_pixels: number, y_pixels: number} = {
         x_pixels: PIXELS,
         y_pixels: PIXELS
@@ -72,6 +79,7 @@ export class ConvolutionsAnimationComponent extends RxUnsubscribe implements OnI
     }
 
     public ngOnInit(): void {
+        this.imageUrl = this.images[0].imageUrl;
         this._loadImage();
         this.defaultFilter = this.allFilters["horizontal"];
         this.animation();
@@ -99,13 +107,13 @@ export class ConvolutionsAnimationComponent extends RxUnsubscribe implements OnI
         });
 
         this.afterApplyFilterObservable$.pipe(
-            delay(this.animateTimer),
             filter(value => !!value),
             takeUntil(race(this.completeAnimation$, this.destroy$))
         ).subscribe((iterator_id: number) => {
+            this.completeAnimatorGridWithValues(iterator_id);
             const target_boundaries = this.getElementsCoordinatesById(String("af_" + iterator_id));
             this.moveFilteredAnimator(target_boundaries, iterator_id);
-        })
+        });
     }
 
     private roundTransitionTime(): number {
@@ -131,20 +139,22 @@ export class ConvolutionsAnimationComponent extends RxUnsubscribe implements OnI
                 this._animationElement.style.transitionProperty = 'all';
                 this._animationElement.style.transitionDuration = `${this.roundTransitionTime()}s`;
                 this._animationElement.style.transitionTimingFunction = 'ease';
-                this.completeAnimatorGridWithValues(iterator);
                 this.cdr.detectChanges();
                 return of({})
-            })).pipe(takeUntil(race(this.destroy$, this.completeAnimation$))).subscribe((data) => {
+            }), 
+            takeUntil(race(this.destroy$, this.completeAnimation$))).subscribe((data) => {
                 this._animationElement.style.height = `${filter_boundaries.height}px`;
                 this._animationElement.style.width = `${filter_boundaries.width}px`;
                 this._animationElement.style.top = `${filter_boundaries.top}px`;
                 this._animationElement.style.left = `${filter_boundaries.left}px`;
                 this._animationElement.style.gridTemplateColumns = "repeat(3, 100px)";
                 this._animationElement.style.gridTemplateRows = "repeat(3, 100px)";
-                this._animationElement.style.opacity = "0.4"
-                this._animationElement.style.padding = "5px"
+                this._animationElement.style.opacity = "0.6"
+                this._animationElement.style.padding = "5px";
                 this.cdr.detectChanges();
-                this.afterFilterApply.next(iterator);
+                timer(this.animateTimer).subscribe(() => {
+                    this.afterFilterApply.next(iterator);
+                })
             })
     }
 
@@ -154,27 +164,30 @@ export class ConvolutionsAnimationComponent extends RxUnsubscribe implements OnI
         this.cdr.detectChanges();
 
         timer(1).pipe(
+            switchMap(() => {
+                this._animationElement.style.transition = `${this.roundTransitionTime()}`;
+                this._animationElement.style.top = `${target_boundaries.top}px`;
+                this._animationElement.style.left = `${target_boundaries.left}px`;
+                this._animationElement.style.height = '20px';
+                this._animationElement.style.width = '20px';
+                this._animationElement.style.padding = "0";
+                this._animationElement.style.gridTemplateColumns = `repeat(3, ${Math.floor(20 / 3)}px)`;
+                this._animationElement.style.gridTemplateRows = `repeat(3, ${Math.floor(20 / 3)}px)`;
+                this._animationElement.style.opacity = "0.1";
+                this.cdr.detectChanges();
+                return of({});
+            }),
             takeUntil(race(this.completeAnimation$, this.destroy$))
         ).subscribe(() => {
-            this._animationElement.style.transition = `${this.roundTransitionTime()}`;
-            this._animationElement.style.top = `${target_boundaries.top}px`;
-            this._animationElement.style.left = `${target_boundaries.left}px`;
-            this._animationElement.style.height = '20px';
-            this._animationElement.style.width = '20px';
-            this._animationElement.style.padding = "0";
-            this._animationElement.style.gridTemplateColumns = `repeat(3, ${Math.floor(20 / 3)}px)`;
-            this._animationElement.style.gridTemplateRows = `repeat(3, ${Math.floor(20 / 3)}px)`;
-            this._animationElement.style.opacity = "0.1";
-            this.cdr.detectChanges();
             timer(this.animateTimer).subscribe(() => {
-                iterator_id += (iterator_id + 2) % 45 === 0 ? 3 : 1
+                iterator_id += (iterator_id + 2) % PIXELS === 0 ? 3 : 1
                 if (iterator_id >= 840) {
                     this.completeAnimation.next();
+                    this.isStartedAnimation = false;
                 };
-                const avgOfAnimatorGrid = this.animatorGrid.reduce((sum, num) => sum + num, 0) / 9;
+                const avgOfAnimatorGrid = Math.min((this.animatorGrid.reduce((sum, num) => sum + num, 0) / 9) * this.amplifyRate, 1);
                 this.filterAppliedImageFlattenedTensor[iterator_id] = this.returnDecimal(avgOfAnimatorGrid < 0 ? 0 : avgOfAnimatorGrid);
                 this.cdr.detectChanges();
-                // console.log(`In afterApplyFilterObservable$, iterator became ${iterator_id}} and called beforeFilter$`);
                 this.beforeApplyFilter.next(iterator_id);
             })
         })
@@ -185,7 +198,6 @@ export class ConvolutionsAnimationComponent extends RxUnsubscribe implements OnI
         const y = (iterator - 1) % PIXELS;
         this.animatorGrid = this.imageTensor.slice([x, y], [3, 3]).flatten().arraySync();
         this.animatorGrid = this.animatorGrid.map((val) => this.returnDecimal(val));
-        this.cdr.detectChanges();
     }
     
     public async _loadImage(): Promise<void> {
@@ -233,32 +245,6 @@ export class ConvolutionsAnimationComponent extends RxUnsubscribe implements OnI
         return boundaries;
     }
 
-    private getImageData(): void {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        const image = new Image();
-
-        if (typeof(this.imageUrl) !== "string") {
-            return ;
-        }
-
-        image.src = this.imageUrl; // Replace with your image URL
-    }
-
-    private displayImage(): void {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext("2d");
-
-        if (ctx) {
-            canvas.width = this.image.width;
-            canvas.height = this.image.height;
-
-            ctx.drawImage(this.image, 0, 0);
-
-            document.body.appendChild(canvas);
-        }
-    }
-
     loadImage(file: File): Promise<HTMLImageElement> {
         return new Promise((resolve, reject) => {
           const img = new Image();
@@ -295,51 +281,6 @@ export class ConvolutionsAnimationComponent extends RxUnsubscribe implements OnI
         this.imageUrl = canvas.toDataURL();
         // console.log(resizedTensor);
         this.cdr.detectChanges();
-    }
-
-    async onImageUpload(file: File) {
-        const image = await this.loadImage(file);
-        const resizedTensor = await this.resizeImage(image);
-        console.log("resizedTensor.shape: ", resizedTensor.shape);
-        console.log(await resizedTensor.data())
-        this.renderResizedImage(resizedTensor);
-
-        const grayscaled = await this.convertIntoGrayImage(image);
-
-        // const tensor = tf.browser.fromPixels(grayscaled, 1); // 1 channel (grayscale)
-        // Convert image to tensor
-        const imageTensor = tf.browser.fromPixels(image);
-    
-        // Add batch dimension [batch, height, width, channels]
-        const batchedImage: tf.Tensor<tf.Rank.R4> = imageTensor.expandDims(0); // This will make the tensor shape [1, height, width, channels]
-    
-        // Define a simple filter (e.g., edge detection)
-        const filter = tf.tensor4d(
-            [
-              // Channel 1
-              -1, -1, -1,
-              -1, 8, -1,
-              -1, -1, -1,
-          
-              // Channel 2 (same for simplicity)
-              -1, -1, -1,
-              -1, 8, -1,
-              -1, -1, -1,
-          
-              // Channel 3 (same for simplicity)
-              -1, -1, -1,
-              -1, 8, -1,
-              -1, -1, -1
-            ],
-            [3, 3, 3, 1] // Filter size: [filterHeight, filterWidth, inChannels, outChannels]
-          );
-          
-    
-        // Apply convolution
-        const convolved = tf.conv2d(batchedImage.toFloat(), filter, [1, 1], "same"); // Stride [1, 1], padding 'same'
-    
-        // Print the result tensor
-        // this.displayConvolvedImage(convolved);
     }
 
     async convertIntoGrayScale(imageTensor: tf.Tensor<tf.Rank>): Promise<tf.Tensor2D> {

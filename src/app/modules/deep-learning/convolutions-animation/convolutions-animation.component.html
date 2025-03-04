@@ -1,29 +1,46 @@
 <div class="animation">
-    <div class="grid-container">
-        <div 
-            class="grid-item" 
-            *ngFor="let item of imageFlattenedTensor; let ind=index"
-            [id]="'bf_' + (ind + 1)"
-        >
-            <span 
-                class="grid-item__opacity" 
-                [ngClass]="{
-                    'black_gb': item <= 0.3
-                }"
-                [ngStyle]="{'opacity': item, 'color': 'black'}"
+    <div class="animation-image">
+        <div class="animation-image__animator-speed">
+            <div class="form-group">
+                <label for="rangeInput">Choose Animation Speed</label>
+                <input 
+                    type="range" 
+                    id="rangeInput" 
+                    class="form-range" 
+                    min="0" 
+                    max="2000" 
+                    step="5"
+                    [(ngModel)]="animateTimer" 
+                />
+                <span>{{ animateTimer }}</span>
+              </div>
+        </div>
+        <div class="grid-container">
+            <div 
+                class="grid-item" 
+                *ngFor="let item of imageFlattenedTensor; let ind=index"
+                [id]="'bf_' + (ind + 1)"
             >
-                {{returnDecimal(item)}}
-            </span>
+                <span 
+                    class="grid-item__opacity" 
+                    [ngClass]="{
+                        'black_gb': item <= 0.3
+                    }"
+                    [ngStyle]="{'opacity': item, 'color': 'black'}"
+                >
+                    {{returnDecimal(item)}}
+                </span>
+            </div>
         </div>
     </div>
     <div class="animation__filter">
         <select 
             class="form-select" 
-            aria-label=".form-select-lg example" 
-            [value]="selectedFilterValue"
+            aria-label=".form-select-lg example"
+            [(ngModel)]="selectedFilterValue"
             (change)="onFilterChange($event)"
         >
-            <option value="" selected>Select Filter Type</option>
+            <option value="">Select Filter Type</option>
             <option *ngFor="let fitler of filterTypes" 
                 [value]="fitler.value"
             >
@@ -42,22 +59,40 @@
         </div>
         <button class="btn btn-primary" (click)="startAnimation()">Start Animation</button>
     </div>
-    <div class="grid-container">
-        <div 
-            class="grid-item" 
-            *ngFor="let item of filterAppliedImageFlattenedTensor; let ind=index"
-            [id]="'af_' + (ind + 1)"
-        >
-            <div class="grid-item__opacity" [ngClass]="{'black_gb': item < 0.3}" [ngStyle]="{'opacity': item, 'color': 'black'}">
-                <span 
-                    class="grid-item__opacity" 
-                    [ngClass]="{
-                        'black_gb': item <= 0.3
-                    }"
-                    [ngStyle]="{'opacity': item, 'color': 'black'}"
+    <div class="animation-image">
+        <div class="animation-image__animator-speed">
+            <div class="form-group">
+                <label for="rangeInput">Choose Amplification</label>
+                <input 
+                    [disabled]="isStartedAnimation"
+                    type="range" 
+                    id="rangeInput" 
+                    class="form-range" 
+                    min="1"
+                    max="5" 
+                    step="1"
+                    [(ngModel)]="amplifyRate" 
+                />
+                <span>{{ amplifyRate }}</span>
+              </div>
+        </div>
+        <div class="grid-container">
+            <div 
+                class="grid-item" 
+                *ngFor="let item of filterAppliedImageFlattenedTensor; let ind=index"
+                [id]="'af_' + (ind + 1)"
             >
-                {{this.filterAppliedImageFlattenedTensor?.[ind]}}
-            </span>
+                <div class="grid-item__opacity" [ngClass]="{'black_gb': item < 0.3}" [ngStyle]="{'opacity': item, 'color': 'black'}">
+                    <span 
+                        class="grid-item__opacity" 
+                        [ngClass]="{
+                            'black_gb': item <= 0.3
+                        }"
+                        [ngStyle]="{'opacity': item, 'color': 'black'}"
+                >
+                    {{this.filterAppliedImageFlattenedTensor?.[ind]}}
+                </span>
+                </div>
             </div>
         </div>
     </div>
