@@ -31,7 +31,7 @@ export class ConvolutionsAnimationComponent extends RxUnsubscribe implements OnI
     private images: {imageName: string, imageUrl: string}[] = [
         {
             imageName: "three",
-            imageUrl: "assets/three.webp"
+            imageUrl: "assets/three.jpg"
         },
         {
             imageName: "nine",
@@ -79,7 +79,7 @@ export class ConvolutionsAnimationComponent extends RxUnsubscribe implements OnI
     }
 
     public ngOnInit(): void {
-        this.imageUrl = this.images[0].imageUrl;
+        this.imageUrl = this.images[1].imageUrl;
         this._loadImage();
         this.defaultFilter = this.allFilters["horizontal"];
         this.animation();
